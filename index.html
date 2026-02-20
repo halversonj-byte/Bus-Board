@@ -251,6 +251,9 @@
       '<rect x="38" y="51" width="24" height="2" rx="1" fill="rgba(0,0,0,0.15)"/>' +
       '</svg>';
 
+    // Central state: always holds the current status of every bus
+    var busStates = {};
+
     function getToday() {
       var d = new Date();
       return d.getFullYear() + '-' +
@@ -259,6 +262,7 @@
     }
 
     function createBusCard(bus) {
+      busStates[bus.bus_number] = bus.status;
       var card = document.createElement('div');
       card.className = 'bus-card ' + bus.status;
       card.id = 'bus-' + bus.bus_number;
@@ -267,25 +271,24 @@
         '<div class="bus-number">' + bus.bus_number + '</div>' +
         '<div class="bus-status">' + (bus.status === 'arrived' ? 'Arrived' : 'Late') + '</div>';
       card.addEventListener('click', function () {
-        toggleBus(bus.bus_number, bus.status);
+        toggleBus(bus.bus_number);
       });
       return card;
     }
 
-    function updateCard(busNumber, newStatus) {
+    function renderCard(busNumber, newStatus) {
+      busStates[busNumber] = newStatus;
       var card = document.getElementById('bus-' + busNumber);
       if (!card) return;
       card.className = 'bus-card ' + newStatus;
       card.querySelector('.bus-status').textContent =
         newStatus === 'arrived' ? 'Arrived' : 'Late';
-      card.onclick = function () {
-        toggleBus(busNumber, newStatus);
-      };
     }
 
-    async function toggleBus(busNumber, currentStatus) {
-      var newStatus = currentStatus === 'arrived' ? 'late' : 'arrived';
-      updateCard(busNumber, newStatus);
+    async function toggleBus(busNumber) {
+      var current = busStates[busNumber];
+      var newStatus = current === 'arrived' ? 'late' : 'arrived';
+      renderCard(busNumber, newStatus);
       await db.from('buses')
         .update({ status: newStatus, updated_date: getToday() })
         .eq('bus_number', busNumber);
@@ -320,7 +323,7 @@
         .on('postgres_changes',
           { event: 'UPDATE', schema: 'public', table: 'buses' },
           function (payload) {
-            updateCard(payload.new.bus_number, payload.new.status);
+            renderCard(payload.new.bus_number, payload.new.status);
           }
         )
         .subscribe(function (status) {
