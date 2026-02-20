@@ -11,11 +11,15 @@
       box-sizing: border-box;
     }
 
+    html, body {
+      height: 100vh;
+      overflow: hidden;
+    }
+
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: #1a1a2e;
       color: #fff;
-      min-height: 100vh;
       display: flex;
       flex-direction: column;
       user-select: none;
@@ -25,69 +29,46 @@
     header {
       background: #16213e;
       text-align: center;
-      padding: 1.5vh 2vw;
+      padding: 1.2vh 2vw;
       border-bottom: 4px solid #0f3460;
+      flex-shrink: 0;
     }
 
     header h1 {
-      font-size: clamp(1.8rem, 4vw, 3.5rem);
+      font-size: 3.8vh;
       font-weight: 700;
       letter-spacing: 2px;
       color: #e94560;
     }
 
     header h2 {
-      font-size: clamp(1rem, 2.2vw, 1.8rem);
+      font-size: 2.2vh;
       font-weight: 400;
       color: #a8b2d1;
-      margin-top: 0.3vh;
+      margin-top: 0.2vh;
     }
-
-    .legend {
-      display: flex;
-      justify-content: center;
-      gap: 3vw;
-      padding: 1.5vh 2vw;
-      background: #16213e;
-      border-bottom: 2px solid #0f3460;
-    }
-
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 0.8vw;
-      font-size: clamp(0.9rem, 1.8vw, 1.4rem);
-      color: #a8b2d1;
-    }
-
-    .legend-dot {
-      width: clamp(16px, 2vw, 28px);
-      height: clamp(16px, 2vw, 28px);
-      border-radius: 50%;
-    }
-
-    .legend-dot.green { background: #2ecc71; }
-    .legend-dot.red { background: #e74c3c; }
 
     main {
       flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 2vh 3vw;
+      padding: 1.2vh 2vw;
+      min-height: 0;
     }
 
     .bus-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: clamp(10px, 2vw, 24px);
+      grid-template-rows: repeat(3, 1fr);
+      gap: 1.2vw;
       width: 100%;
-      max-width: 1600px;
+      height: 100%;
+      max-width: 1800px;
     }
 
     .bus-card {
-      border-radius: clamp(12px, 1.5vw, 20px);
-      padding: clamp(12px, 2.5vh, 32px) clamp(8px, 1.5vw, 20px);
+      border-radius: 1.2vw;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -95,7 +76,7 @@
       cursor: pointer;
       transition: transform 0.15s ease, box-shadow 0.15s ease;
       border: 3px solid transparent;
-      min-height: clamp(100px, 18vh, 200px);
+      gap: 0.4vh;
     }
 
     .bus-card:hover {
@@ -125,40 +106,30 @@
     }
 
     .bus-icon {
-      font-size: clamp(2rem, 4.5vw, 4rem);
-      margin-bottom: 0.5vh;
+      height: 8vh;
+      width: auto;
+      flex-shrink: 0;
+    }
+
+    .bus-icon svg {
+      height: 100%;
+      width: auto;
+      display: block;
     }
 
     .bus-number {
-      font-size: clamp(1.8rem, 4vw, 3.5rem);
+      font-size: 5.5vh;
       font-weight: 800;
       line-height: 1;
-    }
-
-    .bus-label {
-      font-size: clamp(0.7rem, 1.2vw, 1rem);
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      margin-top: 0.3vh;
-      opacity: 0.9;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
 
     .bus-status {
-      font-size: clamp(1rem, 2.2vw, 1.8rem);
+      font-size: 2.8vh;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 3px;
-      margin-top: 0.8vh;
-    }
-
-    footer {
-      text-align: center;
-      padding: 1vh 2vw;
-      background: #16213e;
-      border-top: 2px solid #0f3460;
-      color: #536078;
-      font-size: clamp(0.7rem, 1.2vw, 0.9rem);
+      text-shadow: 0 1px 3px rgba(0,0,0,0.2);
     }
 
     .connection-status {
@@ -196,14 +167,24 @@
       font-size: 1.5rem;
       color: #a8b2d1;
       padding: 4rem;
+      grid-column: 1 / -1;
     }
 
     @media (max-width: 900px) {
-      .bus-grid { grid-template-columns: repeat(3, 1fr); }
+      .bus-grid {
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(4, 1fr);
+      }
     }
 
     @media (max-width: 600px) {
-      .bus-grid { grid-template-columns: repeat(2, 1fr); }
+      .bus-grid {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(6, 1fr);
+      }
+      .bus-icon { height: 5vh; }
+      .bus-number { font-size: 4vh; }
+      .bus-status { font-size: 2vh; }
     }
   </style>
 </head>
@@ -214,26 +195,11 @@
     <h2>Thomas Jefferson Junior High &mdash; Woodridge School District 68</h2>
   </header>
 
-  <div class="legend">
-    <div class="legend-item">
-      <div class="legend-dot green"></div>
-      <span>Arrived</span>
-    </div>
-    <div class="legend-item">
-      <div class="legend-dot red"></div>
-      <span>Late</span>
-    </div>
-  </div>
-
   <main>
     <div class="bus-grid" id="busGrid">
       <div class="loading">Loading buses...</div>
     </div>
   </main>
-
-  <footer>
-    <span>Tap a bus to update its status &bull; Updates sync across all devices in real time</span>
-  </footer>
 
   <div class="connection-status disconnected" id="connectionStatus">Connecting...</div>
 
@@ -242,8 +208,7 @@
 
   <script>
     // =====================================================================
-    //  CONFIGURATION — Replace these two values with your Supabase project
-    //  credentials. See README.md Step 6 for where to find them.
+    //  CONFIGURATION
     // =====================================================================
     const SUPABASE_URL  = 'https://rvwazhztmqbtpprwujmn.supabase.co';
     const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ2d2F6aHp0bXFidHBwcnd1am1uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2MDEyMDksImV4cCI6MjA4NzE3NzIwOX0.vizdTXG8QfcgtcfI6Ma_FYn_UuY-EFgBLIqzEX2glfg';
@@ -255,22 +220,50 @@
     const grid = document.getElementById('busGrid');
     const connStatus = document.getElementById('connectionStatus');
 
-    // Get today's date in the browser's local timezone (YYYY-MM-DD)
+    // Modern front-facing school bus SVG icon (white silhouette)
+    var BUS_SVG = '<svg viewBox="0 0 100 80" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+      // Bus body
+      '<rect x="15" y="10" width="70" height="50" rx="8" fill="rgba(255,255,255,0.9)"/>' +
+      // Roof rack / top bar
+      '<rect x="20" y="6" width="60" height="8" rx="4" fill="rgba(255,255,255,0.7)"/>' +
+      // Windshield
+      '<rect x="22" y="18" width="56" height="20" rx="4" fill="rgba(0,0,0,0.25)"/>' +
+      // Windshield divider
+      '<rect x="49" y="18" width="2" height="20" fill="rgba(255,255,255,0.5)"/>' +
+      // Bumper
+      '<rect x="20" y="56" width="60" height="6" rx="3" fill="rgba(255,255,255,0.6)"/>' +
+      // Left headlight
+      '<circle cx="28" cy="48" r="4" fill="rgba(255,255,200,0.9)"/>' +
+      // Right headlight
+      '<circle cx="72" cy="48" r="4" fill="rgba(255,255,200,0.9)"/>' +
+      // Left wheel
+      '<circle cx="30" cy="68" r="8" fill="rgba(0,0,0,0.4)"/>' +
+      '<circle cx="30" cy="68" r="4" fill="rgba(255,255,255,0.3)"/>' +
+      // Right wheel
+      '<circle cx="70" cy="68" r="8" fill="rgba(0,0,0,0.4)"/>' +
+      '<circle cx="70" cy="68" r="4" fill="rgba(255,255,255,0.3)"/>' +
+      // Side mirrors
+      '<rect x="8" y="22" width="8" height="5" rx="2" fill="rgba(255,255,255,0.6)"/>' +
+      '<rect x="84" y="22" width="8" height="5" rx="2" fill="rgba(255,255,255,0.6)"/>' +
+      // Grill lines
+      '<rect x="38" y="43" width="24" height="2" rx="1" fill="rgba(0,0,0,0.15)"/>' +
+      '<rect x="38" y="47" width="24" height="2" rx="1" fill="rgba(0,0,0,0.15)"/>' +
+      '<rect x="38" y="51" width="24" height="2" rx="1" fill="rgba(0,0,0,0.15)"/>' +
+      '</svg>';
+
     function getToday() {
-      const d = new Date();
+      var d = new Date();
       return d.getFullYear() + '-' +
         String(d.getMonth() + 1).padStart(2, '0') + '-' +
         String(d.getDate()).padStart(2, '0');
     }
 
-    // Build a bus card element
     function createBusCard(bus) {
-      const card = document.createElement('div');
+      var card = document.createElement('div');
       card.className = 'bus-card ' + bus.status;
       card.id = 'bus-' + bus.bus_number;
       card.innerHTML =
-        '<div class="bus-icon">&#128652;</div>' +
-        '<div class="bus-label">Bus</div>' +
+        '<div class="bus-icon">' + BUS_SVG + '</div>' +
         '<div class="bus-number">' + bus.bus_number + '</div>' +
         '<div class="bus-status">' + (bus.status === 'arrived' ? 'Arrived' : 'Late') + '</div>';
       card.addEventListener('click', function () {
@@ -279,57 +272,49 @@
       return card;
     }
 
-    // Update a single card's appearance
     function updateCard(busNumber, newStatus) {
-      const card = document.getElementById('bus-' + busNumber);
+      var card = document.getElementById('bus-' + busNumber);
       if (!card) return;
       card.className = 'bus-card ' + newStatus;
       card.querySelector('.bus-status').textContent =
         newStatus === 'arrived' ? 'Arrived' : 'Late';
-      // Update the click handler with the new status
       card.onclick = function () {
         toggleBus(busNumber, newStatus);
       };
     }
 
-    // Toggle a bus between arrived and late
     async function toggleBus(busNumber, currentStatus) {
-      const newStatus = currentStatus === 'arrived' ? 'late' : 'arrived';
-      // Optimistically update the UI immediately
+      var newStatus = currentStatus === 'arrived' ? 'late' : 'arrived';
       updateCard(busNumber, newStatus);
-      // Persist to Supabase (broadcasts to all other devices automatically)
       await db.from('buses')
         .update({ status: newStatus, updated_date: getToday() })
         .eq('bus_number', busNumber);
     }
 
-    // Reset any buses whose updated_date is not today (daily auto-reset)
     async function resetStaleEntries() {
-      const today = getToday();
+      var today = getToday();
       await db.from('buses')
         .update({ status: 'arrived', updated_date: today })
         .neq('updated_date', today);
     }
 
-    // Load all buses and render the grid
     async function loadBuses() {
       await resetStaleEntries();
-      const { data, error } = await db
+      var result = await db
         .from('buses')
         .select('*')
         .order('bus_number');
-      if (error) {
+      if (result.error) {
         grid.innerHTML = '<div class="loading">Error loading buses. Check your Supabase configuration.</div>';
-        console.error(error);
+        console.error(result.error);
         return;
       }
       grid.innerHTML = '';
-      data.forEach(function (bus) {
+      result.data.forEach(function (bus) {
         grid.appendChild(createBusCard(bus));
       });
     }
 
-    // Subscribe to real-time changes from other devices
     function subscribeToChanges() {
       db.channel('bus-updates')
         .on('postgres_changes',
@@ -351,7 +336,6 @@
         });
     }
 
-    // Start the app
     loadBuses();
     subscribeToChanges();
   </script>
