@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bus Status - Thomas Jefferson Junior High</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #1a1a2e;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    header {
+      background: #16213e;
+      text-align: center;
+      padding: 1.5vh 2vw;
+      border-bottom: 4px solid #0f3460;
+    }
+
+    header h1 {
+      font-size: clamp(1.8rem, 4vw, 3.5rem);
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #e94560;
+    }
+
+    header h2 {
+      font-size: clamp(1rem, 2.2vw, 1.8rem);
+      font-weight: 400;
+      color: #a8b2d1;
+      margin-top: 0.3vh;
+    }
+
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 3vw;
+      padding: 1.5vh 2vw;
+      background: #16213e;
+      border-bottom: 2px solid #0f3460;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.8vw;
+      font-size: clamp(0.9rem, 1.8vw, 1.4rem);
+      color: #a8b2d1;
+    }
+
+    .legend-dot {
+      width: clamp(16px, 2vw, 28px);
+      height: clamp(16px, 2vw, 28px);
+      border-radius: 50%;
+    }
+
+    .legend-dot.green { background: #2ecc71; }
+    .legend-dot.red { background: #e74c3c; }
+
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2vh 3vw;
+    }
+
+    .bus-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: clamp(10px, 2vw, 24px);
+      width: 100%;
+      max-width: 1600px;
+    }
+
+    .bus-card {
+      position: relative;
+      border-radius: clamp(12px, 1.5vw, 20px);
+      padding: clamp(12px, 2.5vh, 32px) clamp(8px, 1.5vw, 20px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      border: 3px solid transparent;
+      min-height: clamp(100px, 18vh, 200px);
+    }
+
+    .bus-card:hover {
+      transform: scale(1.03);
+    }
+
+    .bus-card:active {
+      transform: scale(0.97);
+    }
+
+    .bus-card.arrived {
+      background: linear-gradient(145deg, #27ae60, #2ecc71);
+      border-color: #1e8449;
+      box-shadow: 0 4px 20px rgba(46, 204, 113, 0.3);
+    }
+
+    .bus-card.late {
+      background: linear-gradient(145deg, #c0392b, #e74c3c);
+      border-color: #922b21;
+      box-shadow: 0 4px 20px rgba(231, 76, 60, 0.4);
+      animation: pulse-late 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-late {
+      0%, 100% { box-shadow: 0 4px 20px rgba(231, 76, 60, 0.4); }
+      50% { box-shadow: 0 4px 35px rgba(231, 76, 60, 0.7); }
+    }
+
+    .bus-icon {
+      font-size: clamp(2rem, 4.5vw, 4rem);
+      margin-bottom: 0.5vh;
+    }
+
+    .bus-number {
+      font-size: clamp(1.8rem, 4vw, 3.5rem);
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .bus-label {
+      font-size: clamp(0.7rem, 1.2vw, 1rem);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-top: 0.3vh;
+      opacity: 0.9;
+    }
+
+    .bus-status {
+      font-size: clamp(1rem, 2.2vw, 1.8rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      margin-top: 0.8vh;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1vh 2vw;
+      background: #16213e;
+      border-top: 2px solid #0f3460;
+      color: #536078;
+      font-size: clamp(0.7rem, 1.2vw, 0.9rem);
+    }
+
+    .connection-status {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      z-index: 100;
+      transition: opacity 0.3s;
+    }
+
+    .connection-status.connected {
+      background: rgba(46, 204, 113, 0.2);
+      color: #2ecc71;
+      border: 1px solid #2ecc71;
+    }
+
+    .connection-status.disconnected {
+      background: rgba(231, 76, 60, 0.2);
+      color: #e74c3c;
+      border: 1px solid #e74c3c;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* Responsive: stack 3 columns on tablets, 2 on phones */
+    @media (max-width: 900px) {
+      .bus-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .bus-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Bus Status</h1>
+    <h2>Thomas Jefferson Junior High &mdash; Woodridge School District 68</h2>
+  </header>
+
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-dot green"></div>
+      <span>Arrived</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot red"></div>
+      <span>Late</span>
+    </div>
+  </div>
+
+  <main>
+    <div class="bus-grid" id="busGrid">
+      <!-- Bus cards are generated by JavaScript -->
+    </div>
+  </main>
+
+  <footer>
+    <span>Tap a bus to update its status &bull; Updates sync across all devices in real time</span>
+  </footer>
+
+  <div class="connection-status connected" id="connectionStatus">Connected</div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const grid = document.getElementById('busGrid');
+    const connStatus = document.getElementById('connectionStatus');
+
+    // Connection status indicators
+    socket.on('connect', () => {
+      connStatus.textContent = 'Connected';
+      connStatus.className = 'connection-status connected';
+      // Fade out after 3 seconds when connected
+      setTimeout(() => { connStatus.style.opacity = '0'; }, 3000);
+    });
+
+    socket.on('disconnect', () => {
+      connStatus.textContent = 'Reconnecting...';
+      connStatus.className = 'connection-status disconnected';
+      connStatus.style.opacity = '1';
+    });
+
+    // Build the full board from server state
+    socket.on('state-sync', (data) => {
+      grid.innerHTML = '';
+      data.buses.forEach((busNum) => {
+        const state = data.states[busNum];
+        grid.appendChild(createBusCard(busNum, state));
+      });
+    });
+
+    // Update a single bus when toggled by any client
+    socket.on('bus-update', (data) => {
+      const card = document.getElementById('bus-' + data.bus);
+      if (card) {
+        updateCardState(card, data.state);
+      }
+    });
+
+    function createBusCard(busNum, state) {
+      const card = document.createElement('div');
+      card.className = 'bus-card ' + state;
+      card.id = 'bus-' + busNum;
+      card.innerHTML = `
+        <div class="bus-icon">&#128652;</div>
+        <div class="bus-label">Bus</div>
+        <div class="bus-number">${busNum}</div>
+        <div class="bus-status">${state === 'arrived' ? 'Arrived' : 'Late'}</div>
+      `;
+      card.addEventListener('click', () => {
+        socket.emit('bus-toggle', busNum);
+      });
+      return card;
+    }
+
+    function updateCardState(card, state) {
+      card.className = 'bus-card ' + state;
+      const statusEl = card.querySelector('.bus-status');
+      if (statusEl) {
+        statusEl.textContent = state === 'arrived' ? 'Arrived' : 'Late';
+      }
+    }
+  </script>
+
+</body>
+</html>
